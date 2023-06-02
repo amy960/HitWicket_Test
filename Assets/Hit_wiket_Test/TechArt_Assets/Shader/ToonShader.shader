@@ -4,7 +4,6 @@ Shader "AmitSingh /ToonShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _Color ("Color",COLOR)= (1,1,1,1)
-        _NormalTex ("Normal Tex", 2D) = "white" {}                          // Normal texture not in used
         _Brightness ("Brightness",Range(0,1))=0.5
         _Strength ("Strength",Range(0,1))=0.5
         _Detail("Detail" ,Range(0,1))=0.3
@@ -38,7 +37,6 @@ Shader "AmitSingh /ToonShader"
             };
 
             sampler2D _MainTex;
-            sampler2D _NormalTex;                           // normal texture not in used
             float4 _MainTex_ST;
             float4 _Color;
             float _Brightness;
@@ -58,10 +56,7 @@ Shader "AmitSingh /ToonShader"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-
-              // o.normal = v.norma;                                                             // for adding normal map, normal strength
-               
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex); 
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
 
                 return o;
@@ -69,11 +64,8 @@ Shader "AmitSingh /ToonShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
+        
                 fixed4 col = tex2D(_MainTex, i.uv);
-                float3 tangentNormal = tex2D(_NormalTex, i.uv) * 2 - 1;                         // for normal texture function
-                
-              
                 col *= Toon(i.worldNormal, _WorldSpaceLightPos0.xyz)* _Strength* _Color + _Brightness;
                 return col;
             }
